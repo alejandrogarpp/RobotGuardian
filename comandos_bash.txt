@@ -1,0 +1,25 @@
+# 1. Creamos la conexión Wi-Fi en modo Punto de Acceso (AP)
+sudo nmcli con add type wifi ifname wlan0 con-name MiRedDemo autoconnect yes ssid DemoClase
+
+# 2. La configuramos: le ponemos contraseña, modo compartido (crea su propio DHCP) y fijamos la IP
+sudo nmcli con modify MiRedDemo 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared wifi-sec.key-mgmt wpa-psk wifi-sec.psk "secreta123" ipv4.addresses 192.168.4.1/24
+
+# 3. Encendemos la red
+sudo nmcli con up MiRedDemo
+
+# Descargar la clave del repositorio oficial
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://archive.heckel.io/apt/pubkey.txt | sudo tee /etc/apt/keyrings/archive.heckel.io.asc
+
+# Añadir el repositorio a tu Raspberry
+sudo sh -c "echo 'deb [arch=armhf signed-by=/etc/apt/keyrings/archive.heckel.io.asc] https://archive.heckel.io/apt debian main' > /etc/apt/sources.list.d/archive.heckel.io.list"
+
+# Instalar el programa
+sudo apt update
+sudo apt install ntfy
+
+# Iniciar el servicio para que siempre se encienda al arrancar la Pi
+sudo systemctl enable ntfy
+sudo systemctl start ntfy
+
+sudo apt install python3-requests
